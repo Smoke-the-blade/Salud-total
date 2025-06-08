@@ -12,7 +12,7 @@ function createWindow() {
     }
   })
 
-  win.loadURL('http://localhost:3000') // Para desarrollo
+  win.loadURL('http://localhost:5173') // Para desarrollo
   // win.loadFile('build/index.html')  // Para producción
 }
 
