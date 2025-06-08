@@ -1,0 +1,76 @@
+DROP DATABASE IF EXISTS saludtotalv2;
+CREATE DATABASE saludtotalv2;
+USE saludtotalv2;
+
+-- Tabla usuarios
+CREATE TABLE usuarios (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100),
+  apellido VARCHAR(100),
+  email VARCHAR(100) UNIQUE,
+  contrasena VARCHAR(100),
+  tipo ENUM('paciente', 'medico', 'admin'),
+  obra_social VARCHAR(100),
+  detalles_extras TEXT
+);
+
+-- Tabla especialidades
+CREATE TABLE especialidades (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nombre VARCHAR(100) UNIQUE
+);
+
+-- Relación muchos a muchos entre médicos y especialidades
+CREATE TABLE medico_especialidades (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  medico_id INT,
+  especialidad_id INT,
+  FOREIGN KEY (medico_id) REFERENCES usuarios(id),
+  FOREIGN KEY (especialidad_id) REFERENCES especialidades(id)
+);
+
+-- Turnos
+CREATE TABLE turnos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  paciente_id INT,
+  medico_id INT,
+  especialidad_id INT,
+  fecha DATE,
+  hora TIME,
+  estado ENUM('en espera', 'confirmado', 'cancelado') DEFAULT 'en espera',
+  detalles TEXT,
+  FOREIGN KEY (paciente_id) REFERENCES usuarios(id),
+  FOREIGN KEY (medico_id) REFERENCES usuarios(id),
+  FOREIGN KEY (especialidad_id) REFERENCES especialidades(id)
+);
+
+-- Horarios de doctores
+CREATE TABLE horarios_doctores (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  doctor_id INT,
+  dia_semana VARCHAR(20),
+  hora_inicio TIME,
+  hora_fin TIME,
+  FOREIGN KEY (doctor_id) REFERENCES usuarios(id)
+);
+
+-- Formularios médicos
+CREATE TABLE formularios_medicos (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  doctor_id INT NOT NULL,
+  nombre_completo VARCHAR(100) NOT NULL,
+  fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+  contenido TEXT NOT NULL,
+  FOREIGN KEY (doctor_id) REFERENCES usuarios(id)
+);
+
+INSERT INTO usuarios (nombre, apellido, email, contrasena, tipo)
+VALUES 
+('Admin', 'Principal', 'admin@admin.com', 'admin123', 'admin');
+
+INSERT INTO especialidades (id, nombre) VALUES
+  (1, 'Clínica'),
+  (2, 'Pediatría'),
+  (3, 'Cardiología'),
+  (4, 'Ginecología');
+
